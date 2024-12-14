@@ -6,6 +6,9 @@ import com.github.maaky1.catatan_keuangan.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class CategoryService {
 
@@ -17,5 +20,26 @@ public class CategoryService {
         return new CategoryModel()
                 .setCategoryId(entity.getId())
                 .setCategoryName(entity.getCategoryName());
+    }
+
+    public List<CategoryModel> getAllCategory() {
+        return categoryRepository.findAll()
+                .stream()
+                .map(category -> new CategoryModel()
+                        .setCategoryId(category.getId())
+                        .setCategoryName(category.getCategoryName()))
+                .collect(Collectors.toList());
+    }
+
+    public CategoryModel getCategoryById(long id) {
+        return categoryRepository.findById(id)
+                .map(category -> new CategoryModel()
+                        .setCategoryId(category.getId())
+                        .setCategoryName(category.getCategoryName()))
+                .orElse(null);
+    }
+
+    public void deleteCategory(long id) {
+        categoryRepository.deleteById(id);
     }
 }
