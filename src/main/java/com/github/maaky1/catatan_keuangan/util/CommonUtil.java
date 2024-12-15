@@ -16,7 +16,7 @@ public class CommonUtil {
                                                           ) {
 
         return GenericRq.newBuilder()
-                .requestId(!requestId.isEmpty() ? requestId : UUID.randomUUID().toString())
+                .requestId(requestId != null ? requestId : UUID.randomUUID().toString())
                 .requestAt(requestAt != null ? requestAt : LocalDateTime.now())
                 .operationName(operationName)
                 .payload(payload)

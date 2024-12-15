@@ -1,9 +1,12 @@
 package com.github.maaky1.catatan_keuangan.controller;
 
 import com.github.maaky1.catatan_keuangan.configuration.PathMapping;
+import com.github.maaky1.catatan_keuangan.exception.CommonException;
 import com.github.maaky1.catatan_keuangan.model.request.CategoryRq;
+import com.github.maaky1.catatan_keuangan.model.request.GenericRq;
 import com.github.maaky1.catatan_keuangan.model.response.CategoryRs;
 import com.github.maaky1.catatan_keuangan.service.CategoryService;
+import com.github.maaky1.catatan_keuangan.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +22,10 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @PostMapping(PathMapping.URL_CREATE_CATEGORY)
-    public ResponseEntity<?> createCategory(@RequestBody CategoryRq payload) {
-        CategoryRs response = categoryService.createCategory(payload);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    public ResponseEntity<?> createCategory(@RequestBody CategoryRq payload) throws Exception {
+        GenericRq request = CommonUtil.constructPayload(null, null, "create-category", payload);
+        if (payload.getCategoryName().isEmpty()) throw new CommonException("01", "Failed", "Input category name");
+        return categoryService.createCategory(request);
     }
 
     @GetMapping(PathMapping.URL_GET_ALL_CATEGORY)
