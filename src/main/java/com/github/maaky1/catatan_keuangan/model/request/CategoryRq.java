@@ -1,14 +1,9 @@
-package com.github.maaky1.catatan_keuangan.model;
+package com.github.maaky1.catatan_keuangan.model.request;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 @Data
-@Accessors(chain = true)
-public class CategoryModel {
+public class CategoryRq {
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private long categoryId;
     private String categoryName;
 }
