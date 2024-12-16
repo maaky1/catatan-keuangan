@@ -1,19 +1,16 @@
 package com.github.maaky1.catatan_keuangan.controller;
 
 import com.github.maaky1.catatan_keuangan.configuration.PathMapping;
-import com.github.maaky1.catatan_keuangan.exception.CommonException;
 import com.github.maaky1.catatan_keuangan.model.request.CategoryRq;
 import com.github.maaky1.catatan_keuangan.model.request.GenericRq;
-import com.github.maaky1.catatan_keuangan.model.response.CategoryRs;
 import com.github.maaky1.catatan_keuangan.service.CategoryService;
 import com.github.maaky1.catatan_keuangan.util.CommonUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+@Slf4j
 @RestController
 @RequestMapping(PathMapping.BASE_URL_APP + PathMapping.BASE_URL_CATEGORY)
 public class CategoryController {
@@ -24,25 +21,36 @@ public class CategoryController {
     @PostMapping(PathMapping.URL_CREATE_CATEGORY)
     public ResponseEntity<?> createCategory(@RequestBody CategoryRq payload) throws Exception {
         GenericRq request = CommonUtil.constructPayload(null, null, "create-category", payload);
-        if (payload.getCategoryName().isEmpty()) throw new CommonException("01", "Failed", "Input category name");
-        return categoryService.createCategory(request);
+        log.info("[{}][RECEIVE REQUEST][{}][{}]", request.getRequestId(), request.getOperationName(), request.getPayload());
+        ResponseEntity response = categoryService.createCategory(request);
+        log.info("[{}][RECEIVE COMPLETED][{}]", request.getRequestId(), request.getOperationName());
+        return response;
     }
 
     @GetMapping(PathMapping.URL_GET_ALL_CATEGORY)
     public ResponseEntity<?> getAllCategory() {
-        List<CategoryRs> response = categoryService.getAllCategory();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        GenericRq request = CommonUtil.constructPayload(null, null, "get-all-category", null);
+        log.info("[{}][RECEIVE REQUEST][{}][{}]", request.getRequestId(), request.getOperationName(), request.getPayload());
+        ResponseEntity response = categoryService.getAllCategory(request);
+        log.info("[{}][RECEIVE COMPLETED][{}]", request.getRequestId(), request.getOperationName());
+        return response;
     }
 
     @GetMapping(PathMapping.URL_GET_BY_ID_CATEGORY)
     public ResponseEntity<?> getCategoryById(@PathVariable long id) {
-        CategoryRs response = categoryService.getCategoryById(id);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        GenericRq request = CommonUtil.constructPayload(null, null, "get-category-by-id", id);
+        log.info("[{}][RECEIVE REQUEST][{}][{}]", request.getRequestId(), request.getOperationName(), request.getPayload());
+        ResponseEntity response = categoryService.getCategoryById(request);
+        log.info("[{}][RECEIVE COMPLETED][{}]", request.getRequestId(), request.getOperationName());
+        return response;
     }
 
     @DeleteMapping(PathMapping.URL_DELETE_BY_ID_CATEGORY)
     public ResponseEntity<?> deleteCategoryById(@PathVariable long id) {
-        categoryService.deleteCategory(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        GenericRq request = CommonUtil.constructPayload(null, null, "delete-category-by-id", id);
+        log.info("[{}][RECEIVE REQUEST][{}][{}]", request.getRequestId(), request.getOperationName(), request.getPayload());
+        ResponseEntity response = categoryService.deleteCategory(request);
+        log.info("[{}][RECEIVE COMPLETED][{}]", request.getRequestId(), request.getOperationName());
+        return response;
     }
 }

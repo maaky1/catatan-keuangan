@@ -7,8 +7,8 @@ import com.github.maaky1.catatan_keuangan.model.request.GenericRq;
 import com.github.maaky1.catatan_keuangan.model.response.CategoryRs;
 import com.github.maaky1.catatan_keuangan.model.response.GenericRs;
 import com.github.maaky1.catatan_keuangan.repository.CategoryRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,51 +16,151 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class CategoryService {
 
     @Autowired
     private CategoryRepository categoryRepository;
 
-    private final GenericRs<CategoryRs> response = new GenericRs<CategoryRs>()
-            .setCode("00")
-            .setStatus("Success")
-            .setMessage("Ok");
-
     public ResponseEntity createCategory(GenericRq payload) {
+        GenericRs<CategoryRs> response = new GenericRs<CategoryRs>()
+                .setCode("00")
+                .setStatus("Success")
+                .setMessage("Ok");
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("requestId", payload.getRequestId());
-        headers.add("requestAt", payload.getRequestAt().toString().replace("T", " "));
+        try {
+            log.info("[{}][START][{}][{}]", payload.getRequestId(), payload.getOperationName(), payload.getRequestAt());
+            CategoryRq body = (CategoryRq) payload.getPayload();
+            if (body.getCategoryName() == null ) throw new Exception("Payload is null");
+            if (body.getCategoryName().trim().isEmpty()) throw new CommonException("01", "Failed", "Input category name");
 
-        CategoryRq body = (CategoryRq) payload.getPayload();
-        CategoryEntity entity = categoryRepository.save(new CategoryEntity().setCategoryName(body.getCategoryName()));
-        CategoryRs bodyRs = new CategoryRs()
-                .setCategoryId(entity.getId())
-                .setCategoryName(entity.getCategoryName());
-        response.setPayload(bodyRs);
+            CategoryEntity entity = categoryRepository.save(new CategoryEntity().setCategoryName(body.getCategoryName()));
+            CategoryRs bodyRs = new CategoryRs()
+                    .setCategoryId(entity.getId())
+                    .setCategoryName(entity.getCategoryName());
+            response.setPayload(bodyRs);
 
-        return new ResponseEntity(response, headers, HttpStatus.CREATED);
+            log.info("[{}][FINISH][{}][{}]", payload.getRequestId(), payload.getOperationName(), payload.getRequestAt());
+            return new ResponseEntity(response, HttpStatus.CREATED);
+        } catch (CommonException ex) {
+            response.setCode(ex.getErrorCode())
+                    .setStatus(ex.getErrorStatus())
+                    .setMessage(ex.getErrorMessage());
+
+            log.error("[{}][ERROR][{}][{}]", payload.getRequestId(), payload.getOperationName(), payload.getRequestAt());
+            return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setCode("99")
+                    .setStatus("Error")
+                    .setMessage(e.getMessage());
+
+            log.error("[{}][ERROR][{}][{}]", payload.getRequestId(), payload.getOperationName(), payload.getRequestAt());
+            return new ResponseEntity(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    public List<CategoryRs> getAllCategory() {
-        return categoryRepository.findAll()
-                .stream()
-                .map(category -> new CategoryRs()
-                        .setCategoryId(category.getId())
-                        .setCategoryName(category.getCategoryName()))
-                .collect(Collectors.toList());
+    public ResponseEntity getAllCategory(GenericRq payload) {
+        GenericRs<List<CategoryRs>> response = new GenericRs<List<CategoryRs>>()
+                .setCode("00")
+                .setStatus("Success")
+                .setMessage("Ok");
+
+        try {
+            log.info("[{}][START][{}][{}]", payload.getRequestId(), payload.getOperationName(), payload.getRequestAt());
+            List<CategoryEntity> allCategorys = categoryRepository.findAll();
+            if (allCategorys.isEmpty())  throw new CommonException("01", "Failed", "No found category");
+
+            List<CategoryRs> bodyRs = allCategorys.stream()
+                    .map(category -> new CategoryRs()
+                            .setCategoryId(category.getId())
+                            .setCategoryName(category.getCategoryName()))
+                    .collect(Collectors.toList());
+            response.setPayload(bodyRs);
+
+            log.info("[{}][FINISH][{}][{}]", payload.getRequestId(), payload.getOperationName(), payload.getRequestAt());
+            return new ResponseEntity(response, HttpStatus.FOUND);
+        } catch (CommonException ex) {
+            response.setCode(ex.getErrorCode())
+                    .setStatus(ex.getErrorStatus())
+                    .setMessage(ex.getErrorMessage());
+
+            log.error("[{}][ERROR][{}][{}]", payload.getRequestId(), payload.getOperationName(), payload.getRequestAt());
+            return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setCode("99")
+                    .setStatus("Error")
+                    .setMessage(e.getMessage());
+
+            log.error("[{}][ERROR][{}][{}]", payload.getRequestId(), payload.getOperationName(), payload.getRequestAt());
+            return new ResponseEntity(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    public CategoryRs getCategoryById(long id) {
-        return categoryRepository.findById(id)
-                .map(category -> new CategoryRs()
-                        .setCategoryId(category.getId())
-                        .setCategoryName(category.getCategoryName()))
-                .orElse(null);
+    public ResponseEntity getCategoryById(GenericRq payload) {
+        GenericRs<CategoryRs> response = new GenericRs<CategoryRs>()
+                .setCode("00")
+                .setStatus("Success")
+                .setMessage("Ok");
+
+        try {
+            log.info("[{}][START][{}][{}]", payload.getRequestId(), payload.getOperationName(), payload.getRequestAt());
+            long id = (long) payload.getPayload();
+            CategoryEntity resultById = categoryRepository.findById(id)
+                    .orElseThrow(() -> new CommonException("01", "Failed", "No found category"));
+
+            CategoryRs bodyRs = new CategoryRs()
+                    .setCategoryId(resultById.getId())
+                    .setCategoryName(resultById.getCategoryName());
+            response.setPayload(bodyRs);
+
+            log.info("[{}][FINISH][{}][{}]", payload.getRequestId(), payload.getOperationName(), payload.getRequestAt());
+            return new ResponseEntity(response, HttpStatus.FOUND);
+        } catch (CommonException ex) {
+            response.setCode(ex.getErrorCode())
+                    .setStatus(ex.getErrorStatus())
+                    .setMessage(ex.getErrorMessage());
+
+            log.error("[{}][ERROR][{}][{}]", payload.getRequestId(), payload.getOperationName(), payload.getRequestAt());
+            return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setCode("99")
+                    .setStatus("Error")
+                    .setMessage(e.getMessage());
+
+            log.error("[{}][ERROR][{}][{}]", payload.getRequestId(), payload.getOperationName(), payload.getRequestAt());
+            return new ResponseEntity(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    public void deleteCategory(long id) {
-        categoryRepository.deleteById(id);
+    public ResponseEntity deleteCategory(GenericRq payload) {
+        GenericRs<CategoryRs> response = new GenericRs<CategoryRs>()
+                .setCode("00")
+                .setStatus("Success")
+                .setMessage("Ok");
+
+        try {
+            log.info("[{}][START][{}][{}]", payload.getRequestId(), payload.getOperationName(), payload.getRequestAt());
+            if (payload.getPayload() == null) throw new CommonException("01", "Failed", "Input category name");
+            long id = (long) payload.getPayload();
+            categoryRepository.deleteById(id);
+
+            log.info("[{}][FINISH][{}][{}]", payload.getRequestId(), payload.getOperationName(), payload.getRequestAt());
+            return new ResponseEntity(response, HttpStatus.FOUND);
+        } catch (CommonException ex) {
+            response.setCode(ex.getErrorCode())
+                    .setStatus(ex.getErrorStatus())
+                    .setMessage(ex.getErrorMessage());
+
+            log.error("[{}][ERROR][{}][{}]", payload.getRequestId(), payload.getOperationName(), payload.getRequestAt());
+            return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            response.setCode("99")
+                    .setStatus("Error")
+                    .setMessage(e.getMessage());
+
+            log.error("[{}][ERROR][{}][{}]", payload.getRequestId(), payload.getOperationName(), payload.getRequestAt());
+            return new ResponseEntity(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
