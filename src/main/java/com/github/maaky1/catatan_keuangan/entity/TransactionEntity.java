@@ -9,13 +9,16 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Accessors(chain = true)
-@Table(name = "category", schema = "master")
-public class CategoryEntity {
+@Table(name = "transaction", schema = "master")
+public class TransactionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String categoryName;
+    private String typeTrx;
+    private double amountTrx;
+    private String descriptionTrx;
+    private LocalDateTime dateTrx;
     private LocalDateTime createdOn;
     private LocalDateTime modifiedOn;
 }

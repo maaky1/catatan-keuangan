@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +36,9 @@ public class CategoryService {
             if (body.getCategoryName() == null ) throw new Exception("Payload is null");
             if (body.getCategoryName().trim().isEmpty()) throw new CommonException("01", "Failed", "Input category name");
 
-            CategoryEntity entity = categoryRepository.save(new CategoryEntity().setCategoryName(body.getCategoryName()));
+            CategoryEntity entity = categoryRepository.save(new CategoryEntity()
+                    .setCategoryName(body.getCategoryName())
+                    .setCreatedOn(LocalDateTime.now()));
             CategoryRs bodyRs = new CategoryRs()
                     .setCategoryId(entity.getId())
                     .setCategoryName(entity.getCategoryName());
