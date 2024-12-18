@@ -15,9 +15,13 @@ public class TransactionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String typeTrx;
+    @Column(nullable = false)
+    private String typeTrx; // income, expsense
+    @Column(nullable = false)
     private double amountTrx;
+    @Column(nullable = false)
     private String descriptionTrx;
+    @Column(nullable = false)
     private LocalDateTime dateTrx;
     private LocalDateTime createdOn;
     private LocalDateTime modifiedOn;

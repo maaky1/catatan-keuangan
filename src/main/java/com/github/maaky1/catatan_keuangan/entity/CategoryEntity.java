@@ -15,6 +15,7 @@ public class CategoryEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Column(nullable = false)
     private String categoryName;
     private LocalDateTime createdOn;
     private LocalDateTime modifiedOn;
