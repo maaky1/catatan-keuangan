@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 public class TransactionRq {
 
     private String typeTrx;
+    private String categoryTrx;
     private double amountTrx;
     private String descriptionTrx;
     private LocalDateTime dateTrx;

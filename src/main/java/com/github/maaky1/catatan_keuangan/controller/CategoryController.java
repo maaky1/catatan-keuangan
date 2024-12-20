@@ -19,7 +19,7 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @PostMapping(PathMapping.URL_CREATE_CATEGORY)
-    public ResponseEntity<?> createCategory(@RequestBody CategoryRq payload) throws Exception {
+    public ResponseEntity<?> createCategory(@RequestBody CategoryRq payload) {
         GenericRq request = CommonUtil.constructPayload(null, null, "create-category", payload);
         log.info("[{}][RECEIVE REQUEST][{}][{}]", request.getRequestId(), request.getOperationName(), request.getPayload());
         ResponseEntity response = categoryService.createCategory(request);

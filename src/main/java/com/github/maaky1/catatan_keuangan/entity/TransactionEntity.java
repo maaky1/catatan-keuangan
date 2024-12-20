@@ -19,6 +19,9 @@ public class TransactionEntity {
     private String typeTrx; // income, expsense
     @Column(nullable = false)
     private double amountTrx;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idCategory", nullable = false)
+    private CategoryEntity categoryTrx;
     @Column(nullable = false)
     private String descriptionTrx;
     @Column(nullable = false)

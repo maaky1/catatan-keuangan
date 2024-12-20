@@ -5,6 +5,7 @@ import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -17,6 +18,8 @@ public class CategoryEntity {
     private long id;
     @Column(nullable = false)
     private String categoryName;
+    @OneToMany(mappedBy = "categoryTrx", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TransactionEntity> transactions;
     private LocalDateTime createdOn;
     private LocalDateTime modifiedOn;
 }

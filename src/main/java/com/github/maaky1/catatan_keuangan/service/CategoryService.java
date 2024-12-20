@@ -33,8 +33,11 @@ public class CategoryService {
         try {
             log.info("[{}][START][{}][{}]", payload.getRequestId(), payload.getOperationName(), payload.getRequestAt());
             CategoryRq body = (CategoryRq) payload.getPayload();
-            if (body.getCategoryName() == null ) throw new Exception("Payload is null");
-            if (body.getCategoryName().trim().isEmpty()) throw new CommonException("01", "Failed", "Input category name");
+            if (body.getCategoryName() == null) throw new Exception("Payload is null");
+            if (body.getCategoryName().trim().isEmpty())
+                throw new CommonException("01", "Failed", "Input category name");
+            if (categoryRepository.findByCategoryName(body.getCategoryName()) != null)
+                throw new CommonException("01", "Failed", "Category already exists with name: " + body.getCategoryName());
 
             CategoryEntity entity = categoryRepository.save(new CategoryEntity()
                     .setCategoryName(body.getCategoryName())
@@ -72,7 +75,7 @@ public class CategoryService {
         try {
             log.info("[{}][START][{}][{}]", payload.getRequestId(), payload.getOperationName(), payload.getRequestAt());
             List<CategoryEntity> allCategorys = categoryRepository.findAll();
-            if (allCategorys.isEmpty())  throw new CommonException("01", "Failed", "No found category");
+            if (allCategorys.isEmpty()) throw new CommonException("01", "Failed", "Category not found");
 
             List<CategoryRs> bodyRs = allCategorys.stream()
                     .map(category -> new CategoryRs()
@@ -110,7 +113,7 @@ public class CategoryService {
             log.info("[{}][START][{}][{}]", payload.getRequestId(), payload.getOperationName(), payload.getRequestAt());
             long id = (long) payload.getPayload();
             CategoryEntity resultById = categoryRepository.findById(id)
-                    .orElseThrow(() -> new CommonException("01", "Failed", "No found category"));
+                    .orElseThrow(() -> new CommonException("01", "Failed", "Category not found with ID: " + id));
 
             CategoryRs bodyRs = new CategoryRs()
                     .setCategoryId(resultById.getId())
