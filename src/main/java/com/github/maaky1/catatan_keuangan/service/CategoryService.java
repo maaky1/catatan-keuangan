@@ -85,7 +85,7 @@ public class CategoryService {
             response.setPayload(bodyRs);
 
             log.info("[{}][FINISH][{}][{}]", payload.getRequestId(), payload.getOperationName(), payload.getRequestAt());
-            return new ResponseEntity(response, HttpStatus.FOUND);
+            return new ResponseEntity(response, HttpStatus.OK);
         } catch (CommonException ex) {
             response.setCode(ex.getErrorCode())
                     .setStatus(ex.getErrorStatus())
@@ -121,7 +121,7 @@ public class CategoryService {
             response.setPayload(bodyRs);
 
             log.info("[{}][FINISH][{}][{}]", payload.getRequestId(), payload.getOperationName(), payload.getRequestAt());
-            return new ResponseEntity(response, HttpStatus.FOUND);
+            return new ResponseEntity(response, HttpStatus.OK);
         } catch (CommonException ex) {
             response.setCode(ex.getErrorCode())
                     .setStatus(ex.getErrorStatus())
@@ -152,7 +152,7 @@ public class CategoryService {
             categoryRepository.deleteById(id);
 
             log.info("[{}][FINISH][{}][{}]", payload.getRequestId(), payload.getOperationName(), payload.getRequestAt());
-            return new ResponseEntity(response, HttpStatus.FOUND);
+            return new ResponseEntity(response, HttpStatus.OK);
         } catch (CommonException ex) {
             response.setCode(ex.getErrorCode())
                     .setStatus(ex.getErrorStatus())

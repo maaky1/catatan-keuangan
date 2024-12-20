@@ -16,6 +16,6 @@ public class PathMapping {
     public static final String URL_GET_BY_ID_TRANSACTION = "/get-by-id/{id}";
     public static final String URL_DELETE_BY_ID_TRANSACTION = "/delete-by-id/{id}";
     public static final String URL_UPDATE_TRANSACTION = "/update-by-id/{id}";
-    public static final String URL_GET_BY_FILTER_TRANSACTION = "/filter";
+    public static final String URL_FILTER_BY_TYPE_TRANSACTION = "/filter";
     public static final String URL_FILTER_BY_RANGE_TRANSACTION = "/data-range";
 }
