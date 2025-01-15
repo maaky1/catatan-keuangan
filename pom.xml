@@ -12,7 +12,9 @@
 	<artifactId>catatan-keuangan</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>catatan-keuangan</name>
+	<packaging>jar</packaging>
 	<description>Aplikasi untuk mencatat pemasukan dan pengeluaran keuangan.</description>
+
 	<url/>
 	
 	<developers>

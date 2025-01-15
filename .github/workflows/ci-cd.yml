@@ -30,7 +30,11 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
-      # 4. Run Unit Tests
+      # 4. Debug: List files in the target directory
+      - name: List files in target directory
+        run: ls -l target/
+
+      # 5. Run Unit Tests
   #      - name: Run Unit Tests
   #        run: mvn test
 
@@ -54,11 +58,14 @@ jobs:
       # 3. Pastikan file .jar ada
       - name: Verify JAR File Exists
         run: |
+          # Pastikan file .jar ada di direktori target atau build/libs
           if [ ! -f target/catatan-keuangan-0.0.1-SNAPSHOT.jar ]; then
-            echo "Error: catatan-keuangan-0.0.1-SNAPSHOT.jar not found in target/ directory!"
-            exit 1
+          if [ ! -f build/libs/catatan-keuangan-0.0.1-SNAPSHOT.jar ]; then
+           echo "Error: catatan-keuangan-0.0.1-SNAPSHOT.jar not found in target/ or build/libs/ directory!"
+           exit 1
           fi
-
+          fi
+          
       # 4. Build Docker image
       - name: Build Docker Image
         run: |
