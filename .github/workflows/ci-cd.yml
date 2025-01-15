@@ -51,30 +51,21 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # 3. Build Docker image
+      # 3. Pastikan file .jar ada
+      - name: Verify JAR File Exists
+        run: |
+          if [ ! -f target/catatan-keuangan-0.0.1-SNAPSHOT.jar ]; then
+            echo "Error: catatan-keuangan-0.0.1-SNAPSHOT.jar not found in target/ directory!"
+            exit 1
+          fi
+
+      # 4. Build Docker image
       - name: Build Docker Image
         run: |
           docker build -t catatan-keuangan:${{ github.sha }} .
           docker tag catatan-keuangan:${{ github.sha }} my-dockerhub-user/catatan-keuangan:latest
 
-      # 4. Push Docker image
+      # 5. Push Docker image
       - name: Push Docker Image
         run: |
           docker push my-dockerhub-user/catatan-keuangan:latest
-
-#  # Job ketiga: Deploy ke Server
-#  deploy:
-#    runs-on: ubuntu-latest
-#    needs: dockerize
-#
-#    steps:
-#      # 1. SSH ke server dan jalankan Docker Compose
-#      - name: Deploy to Server
-#        uses: appleboy/ssh-action@v0.1.7
-#        with:
-#          host: ${{ secrets.SERVER_HOST }}
-#          username: ${{ secrets.SERVER_USER }}
-#          key: ${{ secrets.SERVER_PRIVATE_KEY }}
-#          script: |
-#            docker pull my-dockerhub-user/my-app:latest
-#            docker-compose up -d
