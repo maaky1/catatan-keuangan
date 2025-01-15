@@ -31,46 +31,50 @@ jobs:
         run: mvn clean package -DskipTests
 
       # 4. Run Unit Tests
-#      - name: Run Unit Tests
-#        run: mvn test
+  #      - name: Run Unit Tests
+  #        run: mvn test
 
   # Job kedua: Build dan Push Docker Image
-#  docker_build_and_push:
-#    needs: build_and_test  # Job ini hanya berjalan jika build_and_test sukses
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      # 1. Checkout kode dari repository
-#      - name: Checkout code
-#        uses: actions/checkout@v3
-#
-#      # 2. Login ke Docker Hub
-#      - name: Login to Docker Hub
-#        uses: docker/login-action@v2
-#        with:
-#          username: ${{ secrets.DOCKER_USERNAME }}
-#          password: ${{ secrets.DOCKER_PASSWORD }}
-#
-#      # 3. Build Docker Image
-#      - name: Build Docker Image
-#        run: docker build -t my-dockerhub-user/my-app:${{ github.sha }} .
-#
-#      # 4. Push Docker Image ke Docker Hub
-#      - name: Push Docker Image
-#        run: docker push my-dockerhub-user/my-app:${{ github.sha }}
-#
+  docker_build_and_push:
+    needs: build_and_test  # Job ini hanya berjalan jika build_and_test sukses
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout kode dari repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Login ke Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 3. Build Docker image
+      - name: Build Docker Image
+        run: |
+          docker build -t catatan-keuangan:${{ github.sha }} .
+          docker tag catatan-keuangan:${{ github.sha }} my-dockerhub-user/catatan-keuangan:latest
+
+      # 4. Push Docker image
+      - name: Push Docker Image
+        run: |
+          docker push my-dockerhub-user/catatan-keuangan:latest
+
 #  # Job ketiga: Deploy ke Server
-#  deploy_to_server:
-#    needs: docker_build_and_push  # Job ini hanya berjalan jika docker_build_and_push sukses
+#  deploy:
 #    runs-on: ubuntu-latest
+#    needs: dockerize
 #
 #    steps:
-#      # 1. Deploy Docker Image ke Server
+#      # 1. SSH ke server dan jalankan Docker Compose
 #      - name: Deploy to Server
-#        run: |
-#          ssh -i ~/.ssh/id_rsa user@your-server-ip <<EOF
-#          docker pull my-dockerhub-user/my-app:${{ github.sha }}
-#          docker stop my-app || true
-#          docker rm my-app || true
-#          docker run -d --name my-app -p 8080:8080 my-dockerhub-user/my-app:${{ github.sha }}
-#          EOF
+#        uses: appleboy/ssh-action@v0.1.7
+#        with:
+#          host: ${{ secrets.SERVER_HOST }}
+#          username: ${{ secrets.SERVER_USER }}
+#          key: ${{ secrets.SERVER_PRIVATE_KEY }}
+#          script: |
+#            docker pull my-dockerhub-user/my-app:latest
+#            docker-compose up -d
