@@ -1,11 +1,11 @@
 # Gunakan image Java sebagai base image
-FROM openjdk:8-jdk-alpine
+FROM openjdk:8-jdk-slim
 
 # Set working directory di container
 WORKDIR /app
 
 # Salin file jar ke container
-COPY target/catatan-keuangan-0.0.1-SNAPSHOT.jar catatan-keuangan.jar
+COPY target/catatan-keuangan*.jar /app/catatan-keuangan.jar
 
 # Tentukan port aplikasi
 EXPOSE 8080

@@ -28,7 +28,7 @@ jobs:
 
       # 3. Build Maven Project
       - name: Build with Maven
-        run: mvn clean package -DskipTests
+        run: mvn clean package -DskipTests=True
 
       # 4. Debug: List files in the target directory
       - name: List files in target directory
@@ -55,24 +55,29 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # 3. Pastikan file .jar ada
-      - name: Verify JAR File Exists
+      # Debug: List files in the target directory
+      - name: List files in target directory
         run: |
-          # Pastikan file .jar ada di direktori target atau build/libs
-          if [ ! -f target/catatan-keuangan-0.0.1-SNAPSHOT.jar ]; then
-          if [ ! -f build/libs/catatan-keuangan-0.0.1-SNAPSHOT.jar ]; then
-           echo "Error: catatan-keuangan-0.0.1-SNAPSHOT.jar not found in target/ or build/libs/ directory!"
-           exit 1
+          echo "Checking target directory:"
+          ls -l target/
+          ls -l app/
+
+      # Verify single JAR file exists
+      - name: Verify single JAR file exists
+        run: |
+          JAR_COUNT=$(ls -1 target/catatan-keuangan*.jar | wc -l)
+          if [ "$JAR_COUNT" -ne 1 ]; then
+            echo "Error: Found $JAR_COUNT JAR files in target/ but expected exactly 1!"
+            exit 1
           fi
-          fi
-          
-      # 4. Build Docker image
+
+      # Build Docker image
       - name: Build Docker Image
         run: |
           docker build -t catatan-keuangan:${{ github.sha }} .
           docker tag catatan-keuangan:${{ github.sha }} my-dockerhub-user/catatan-keuangan:latest
 
-      # 5. Push Docker image
+      # Push Docker image
       - name: Push Docker Image
         run: |
           docker push my-dockerhub-user/catatan-keuangan:latest
