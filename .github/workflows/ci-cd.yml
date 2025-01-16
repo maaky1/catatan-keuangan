@@ -76,6 +76,12 @@ jobs:
           pwd
           ls -l 
 
+      # Pastikan direktori target ada
+      - name: Create target directory if it doesn't exist
+        run: |
+          mkdir -p target
+          pwd
+
       # Pindahkan file JAR ke target directory (atau lokasi lain yang diinginkan)
       - name: Move JAR file to target directory
         run: |
