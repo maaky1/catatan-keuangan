@@ -98,9 +98,9 @@ jobs:
       - name: Build Docker Image
         run: |
           docker build -t catatan-keuangan:${{ github.sha }} .
-          docker tag catatan-keuangan:${{ github.sha }} my-dockerhub-user/catatan-keuangan:latest
+          docker tag catatan-keuangan:${{ github.sha }} agusfikry1/catatan-keuangan:latest
 
       # Push Docker image
       - name: Push Docker Image
         run: |
-          docker push my-dockerhub-user/catatan-keuangan:latest
+          docker push agusfikry1/catatan-keuangan:latest
