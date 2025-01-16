@@ -34,7 +34,13 @@ jobs:
       - name: List files in target directory
         run: ls -l target/
 
-      # 5. Run Unit Tests
+      - name: Upload JAR as artifact
+        uses: actions/upload-artifact@v3
+        with:
+            name: build-jar
+            path: target/catatan-keuangan*.jar
+
+      # 6. Run Unit Tests
   #      - name: Run Unit Tests
   #        run: mvn test
 
@@ -44,32 +50,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout kode dari repository
+      # Checkout kode dari repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Login ke Docker Hub
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
+      # Checkout kode dari repository
+      - name: Download JAR artifact
+        uses: actions/download-artifact@v3
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+            name: build-jar
 
       # Debug: List files in the target directory
       - name: List files in target directory
         run: |
           echo "Checking target directory:"
-          ls -l target/
-          ls -l app/
+          ls -l 
 
-      # Verify single JAR file exists
-      - name: Verify single JAR file exists
-        run: |
-          JAR_COUNT=$(ls -1 target/catatan-keuangan*.jar | wc -l)
-          if [ "$JAR_COUNT" -ne 1 ]; then
-            echo "Error: Found $JAR_COUNT JAR files in target/ but expected exactly 1!"
-            exit 1
-          fi
+      # Login ke Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       # Build Docker image
       - name: Build Docker Image
