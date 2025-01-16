@@ -64,7 +64,13 @@ jobs:
       - name: List files in target directory
         run: |
           echo "Checking target directory:"
+          pwd
           ls -l 
+
+      # Pindahkan file JAR ke target directory (atau lokasi lain yang diinginkan)
+      - name: Move JAR file to target directory
+        run: |
+          mv /home/runner/work/catatan-keuangan/catatan-keuangan/target/catatan-keuangan*.jar target/
 
       # Login ke Docker Hub
       - name: Login to Docker Hub
