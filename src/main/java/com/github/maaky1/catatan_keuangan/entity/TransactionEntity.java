@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Accessors(chain = true)
-@Table(name = "transaction", schema = "master")
+@Table(name = "transaction")
 public class TransactionEntity {
 
     @Id

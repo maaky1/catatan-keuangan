@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @Entity
 @Accessors(chain = true)
-@Table(name = "category", schema = "master")
+@Table(name = "category")
 public class CategoryEntity {
 
     @Id

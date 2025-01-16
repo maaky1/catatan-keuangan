@@ -7,6 +7,9 @@ WORKDIR /app
 # Salin file jar ke container
 COPY target/catatan-keuangan*.jar /app/catatan-keuangan.jar
 
+# Salin values-dev.yml ke dalam container
+COPY values-dev.yml /app/config/values-dev.yml
+
 # Tentukan port aplikasi
 EXPOSE 8080
 
